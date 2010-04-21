@@ -1,9 +1,9 @@
-=== Valuecommerce Site Registration ===
+=== Tw Anyware ===
 Contributors: wackey
 Tags: twitter , comment
 Requires at least: 2.9
 Tested up to: 2.9.2
-Stable tag: 1.00
+Stable tag: 1.01
 
 Add Twitter anyware API,connect and tweet,follow.
 
@@ -28,6 +28,8 @@ Furthermore, the visitor takes side with the page by visitor's account and it is
 
 == Changelog ==
 
+= 1.01 =
+* Plugin name renamed.
 = 1.00 =
 * Released.
 

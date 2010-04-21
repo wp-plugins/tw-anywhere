@@ -4,11 +4,11 @@
    Above is a Japanese strings to avoid charset mis-understanding.
    This source file is saved with UTF-8. */
 /*
-Plugin Name: tw anywhere
+Plugin Name: Tw Anyware
 Plugin URI: http://vcsearch.web-service-api.jp/
 Description: Add Twitter anyware API,connect and tweet,follow.
 Author: wackey
-Version: 1.00
+Version: 1.01
 Author URI: http://musilog.net/
 */
 
@@ -131,7 +131,7 @@ twttr.anywhere(function(twitter){
 
 // 管理画面メニュー作成関数
 function tw_anywhere_menu() {
-add_options_page('tw anywhere Options', 'tw anywhere', 8, __FILE__, 'tw_anywhere_options');
+add_options_page('Tw Anyware Options', 'Tw Anyware', 8, __FILE__, 'tw_anywhere_options');
 }
 
 
@@ -150,7 +150,7 @@ $tw_anywhere_username= get_option('tw_anywhere_username');
 ?>
 
 <div class="wrap">
-<h2>Twitter Anywhere Settings</h2>
+<h2>Tw Anyware Settings</h2>
 <form name="form" method="post" action="">
 <input type="hidden" name="action" value="update" />
 <?php wp_nonce_field('tw-anywhere-options'); ?>
