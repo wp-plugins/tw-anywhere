@@ -3,7 +3,7 @@ Contributors: wackey
 Tags: twitter , comment
 Requires at least: 2.9
 Tested up to: 2.9.2
-Stable tag: 1.2
+Stable tag: 1.21
 
 Add Twitter anyware API,connect and tweet,follow.And Topsy API using.It displays it like the comment column. 
 

@@ -8,7 +8,7 @@ Plugin Name: Tw Anyware comment system
 Plugin URI: http://vcsearch.web-service-api.jp/
 Description: Add Twitter anyware API,connect and tweet,follow.
 Author: wackey
-Version: 1.2
+Version: 1.21
 Author URI: http://musilog.net/
 */
 
