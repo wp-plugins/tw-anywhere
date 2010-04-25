@@ -4,11 +4,11 @@
    Above is a Japanese strings to avoid charset mis-understanding.
    This source file is saved with UTF-8. */
 /*
-Plugin Name: Tw Anyware
+Plugin Name: Tw Anyware comment system
 Plugin URI: http://vcsearch.web-service-api.jp/
 Description: Add Twitter anyware API,connect and tweet,follow.
 Author: wackey
-Version: 1.01
+Version: 1.02
 Author URI: http://musilog.net/
 */
 
@@ -36,16 +36,26 @@ $tw_anywhere_api_key= get_option('tw_anywhere_api_key');
 echo '<script src="http://platform.twitter.com/anywhere.js?id='.stripslashes($tw_anywhere_api_key).'&v=1"></script>';
 }
 
-//
+// 本文の下部分にtwitter機能を搭載する場所をdivで指定
 function add_anyware_area($content) {
+
+if (is_single()) {
+
 $content .='<p>
 <div id="twitterConnectButton"></div>
 <div id="twitterSignOut"></div><br />
 <div id="twitterFollowButton"></div>
 <div id="twitterUserInfo"></div>
 <div id="twitterTweetBox"></div>
+<div style="margin:0 0 10px 0;padding:10px;border:1px solid #BDDCAD;background:#EDFFDC;-moz-border-radius:10px;-webkit-border-radius:10px;">
+<h4 style="margin:0 0 5px 0;padding:0;">Twitter Comment<span id="topsy_counter"></span></h4>
+<div id="topsy_trackbacks"></div>
+</div>
 </p>';
+}
+// Comment by tospy API thx.yager http://creazy.net/2009/12/topsy_api_twitter_blogparts.html
 return $content;
+
 }
 
 // フッターにjavascriptでいろいろ
@@ -65,6 +75,7 @@ function anywhereConnected(twitter) {
     var user = twitter.currentUser;
 
     // コネクトユーザー情報の表示
+<?php if (get_option('tw_your_profile_show')=="1") { ?>
     document.getElementById('twitterUserInfo').innerHTML
         = '<img src="'+user.data('profile_image_url')+'" alt="'+user.data('screen_name')+'" /><br />'
         + '<a href="http://twitter.com/'+user.data('screen_name')+'" target="_blank">'+user.data('name')+'</a><br />'
@@ -73,6 +84,7 @@ function anywhereConnected(twitter) {
         + '<b>自己紹介</b> '+user.data('description')+'<br />'
         + '<a href="http://twitter.com/'+user.data('screen_name')+'/following" target="_blank">'+user.data('friends_count')+'</a>following<br />'
         + '<a href="http://twitter.com/'+user.data('screen_name')+'/followers" target="_blank">'+user.data('followers_count')+'</a>followers<br />';
+<?php } ?>
 
     // サインアウトボタンの表示
     document.getElementById('twitterSignOut').innerHTML
@@ -86,8 +98,16 @@ function anywhereConnected(twitter) {
         counter: true,
         width: 500,
         height: 50,
-        label: "ツイッターでコメントが書けます",
-        defaultContent: "@<?php echo stripslashes($tw_anywhere_username); ?> ここにコメントをお願いします " + permalink
+        label: "Twtter Post with this URL",
+        defaultContent: "@<?php echo stripslashes($tw_anywhere_username); ?> Please post here like the comment. " + permalink,
+	onTweet: function() {
+        // Topsy APIを更新
+        script = d.createElement('script');
+        script.type = 'text/javascript';
+        script.src  = 'http://otter.topsy.com/trackbacks.js?callback=topsyCallback&url='+encodeURIComponent(location.href);
+        d.getElementsByTagName('head')[0].appendChild(script);
+    }
+
     });
 }
 /**
@@ -124,6 +144,51 @@ twttr.anywhere(function(twitter){
     };
 });
 </script>
+<script type="text/javascript">
+function topsyCallback(json) {
+    res = json.response;
+    if ( !res.total ) {
+        return false;
+    }
+    html = '（' + res.total + ' tweets）';
+    if ( document.getElementById('topsy_counter') ) {
+        document.getElementById('topsy_counter').innerHTML = html;
+    }
+    html = '<ul style="list-style:none;margin:0 0 5px 0;padding:0;">';
+    for ( var i=0; i<res.list.length; i++ ) {
+        tweet     = res.list[i];
+        thumb     = tweet.author.photo_url.replace(/(normal)\.([a-z]{3,4})$/i,'mini.$2');
+        author_id = tweet.author.url.replace('http://twitter.com/','');
+        html
+            += '<li style="margin:0;padding:1px;font:11px/16px sans-serif;color:#333;white-space:pre;overflow:hidden;">'
+            +  '<a href="'+tweet.author.url+'" target="_blank">'
+            +  '<img src="'+thumb+'" alt="'+tweet.author.name+'" style="border:0;vertical-align:middle;width:24px;height:24px;" />'
+            +  '</a> '
+            +  '<a href="'+tweet.author.url+'" target="_blank" style="color:#0084B4;">'
+            +  author_id
+            +  '</a> '
+            +  tweet.content.replace(/(\r\n|\r|\n)/g,'')
+            +  '</li>';
+    }
+    html += '</ul>';
+    if ( res.total > 10 ) {
+        html
+            += '<div>'
+            +  '<a href="'+res.topsy_trackback_url+'" target="_blank" style="display:inline-block;margin:0;padding:5px;font:14px/16px sans-serif;color:#0084B4;text-decoration:none;border:1px solid #CCC;background:#EEE;-moz-border-radius:5px;-webkit-border-radius:5px;">'
+            +  'more'
+            +  '</a>'
+            +  '</div>';
+    }
+    if ( document.getElementById('topsy_trackbacks') ) {
+        document.getElementById('topsy_trackbacks').innerHTML = html;
+    }
+}
+
+script = document.createElement('script');
+script.type = 'text/javascript';
+script.src  = 'http://otter.topsy.com/trackbacks.js?callback=topsyCallback&url='+encodeURIComponent(location.href);
+document.getElementsByTagName('head')[0].appendChild(script);
+</script>
 <?php
 }
 
@@ -142,11 +207,13 @@ if (isset($_POST['update_option'])) {
 check_admin_referer('tw-anywhere-options');
 update_option('tw_anywhere_api_key', $_POST['tw_anywhere_api_key']);
 update_option('tw_anywhere_username', $_POST['tw_anywhere_username']);
+update_option('tw_your_profile_show', $_POST['tw_your_profile_show']);
 //$this->upate_options(); ?>
 <div class="updated fade"><p><strong><?php _e('Options saved.'); ?></strong></p>
 </div> <?php }
 $tw_anywhere_api_key= get_option('tw_anywhere_api_key');
 $tw_anywhere_username= get_option('tw_anywhere_username');
+$tw_your_profile_show= get_option('tw_your_profile_show');
 ?>
 
 <div class="wrap">
@@ -169,6 +236,12 @@ id="tw_anywhere_username" value="<?php
 echo attribute_escape($tw_anywhere_username); ?>" /><br />
 without "@"
 </td>
+</tr>
+
+<tr>
+<th><label for="tw_your_profile_show"><?php
+_e('twitter your profile show?', 'tw_your_profile_show'); ?></label></th> <td><input type="checkbox" name="tw_your_profile_show"
+id="tw_your_profile_show" value="1" <?php if ($tw_your_profile_show==1) {echo "checked ";} ?> />yes</td>
 </tr>
 </tbody></table>
 
