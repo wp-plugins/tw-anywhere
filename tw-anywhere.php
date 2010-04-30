@@ -8,7 +8,7 @@ Plugin Name: Tw Anyware comment system
 Plugin URI: http://vcsearch.web-service-api.jp/
 Description: Add Twitter anyware API,connect and tweet,follow.
 Author: wackey
-Version: 1.21
+Version: 1.30
 Author URI: http://musilog.net/
 */
 
@@ -41,8 +41,7 @@ function add_anyware_area($content) {
 
 if (is_single()) {
 
-$content .='<p>
-<div id="twitterConnectButton"></div>
+$content .='<div id="twitterConnectButton"></div>
 <div id="twitterSignOut"></div><br />
 <div id="twitterFollowButton"></div>
 <div id="twitterUserInfo"></div>
@@ -50,8 +49,7 @@ $content .='<p>
 <div style="margin:0 0 10px 0;padding:10px;border:1px solid #BDDCAD;background:#EDFFDC;-moz-border-radius:10px;-webkit-border-radius:10px;">
 <h4 style="margin:0 0 5px 0;padding:0;">Twitter Comment<span id="topsy_counter"></span></h4>
 <div id="topsy_trackbacks"></div>
-</div>
-</p>';
+</div>';
 }
 // Comment by tospy API thx.yager http://creazy.net/2009/12/topsy_api_twitter_blogparts.html
 return $content;
@@ -61,10 +59,19 @@ return $content;
 // フッターにjavascriptでいろいろ
 function add_footer_script() {
 $tw_anywhere_username= get_option('tw_anywhere_username');
+$tw_anywhere_bitlyusername= get_option('tw_anywhere_bitlyusername');
+$tw_anywhere_bitlyapikey= get_option('tw_anywhere_bitlyapikey');
+$permalink = get_permalink();
+// bitlyアカウントが設定されているかどうか確認
+if (!$tw_anywhere_bitlyapikey=="") {
+$bitlyurl = "http://api.bit.ly/shorten?version=2.0.1&format=xml&login=$tw_anywhere_bitlyusername&apiKey=$tw_anywhere_bitlyapikey&longUrl=$permalink";
+$xml = simplexml_load_file ($bitlyurl);
+$shortlink = $xml->results->nodeKeyVal->shortCNAMEUrl;
+}
 ?>
 <script type="text/javascript">
 // thx.yager http://creazy.net/2010/04/twitter_anywhere.html
-var permalink = '<?php the_permalink() ?>';
+var permalink = '<?php echo $permalink; ?>';
 
 /**
  * コネクト済みの場合の処理
@@ -99,7 +106,7 @@ function anywhereConnected(twitter) {
         width: 500,
         height: 50,
         label: "Twtter Post with this URL",
-        defaultContent: "@<?php echo stripslashes($tw_anywhere_username); ?> Please post here like the comment. " + permalink,
+        defaultContent: "@<?php echo stripslashes($tw_anywhere_username); ?> Please post here like the comment. " + <?php if (!$tw_anywhere_bitlyapikey=="") {echo '"'.$shortlink.'"';} else {echo "permalink";} ?>,
 	onTweet: function() {
         // Topsy APIを更新
         script = d.createElement('script');
@@ -208,12 +215,16 @@ check_admin_referer('tw-anywhere-options');
 update_option('tw_anywhere_api_key', $_POST['tw_anywhere_api_key']);
 update_option('tw_anywhere_username', $_POST['tw_anywhere_username']);
 update_option('tw_your_profile_show', $_POST['tw_your_profile_show']);
+update_option('tw_anywhere_bitlyusername', $_POST['tw_anywhere_bitlyusername']);
+update_option('tw_anywhere_bitlyapikey', $_POST['tw_anywhere_bitlyapikey']);
 //$this->upate_options(); ?>
 <div class="updated fade"><p><strong><?php _e('Options saved.'); ?></strong></p>
 </div> <?php }
 $tw_anywhere_api_key= get_option('tw_anywhere_api_key');
 $tw_anywhere_username= get_option('tw_anywhere_username');
 $tw_your_profile_show= get_option('tw_your_profile_show');
+$tw_anywhere_bitlyusername= get_option('tw_anywhere_bitlyusername');
+$tw_anywhere_bitlyapikey= get_option('tw_anywhere_bitlyapikey');
 ?>
 
 <div class="wrap">
@@ -243,6 +254,26 @@ without "@"
 _e('twitter your profile show?', 'tw_your_profile_show'); ?></label></th> <td><input type="checkbox" name="tw_your_profile_show"
 id="tw_your_profile_show" value="1" <?php if ($tw_your_profile_show==1) {echo "checked ";} ?> />yes</td>
 </tr>
+
+<tr>
+<th><label for="tw_anywhere_bitlyusername"><?php
+_e('bit.ly username', 'tw_anywhere_bitlyusername'); ?></label></th> <td><input size="36" type="text" name="tw_anywhere_bitlyusername"
+id="tw_anywhere_bitlyusername" value="<?php
+echo attribute_escape($tw_anywhere_bitlyusername); ?>" /><br />
+*If you use bit.ly API,put on.
+</td>
+</tr>
+
+<tr>
+<th><label for="tw_anywhere_bitlyapikey"><?php
+_e('your bit.ly API key', 'tw_anywhere_bitlyapikey'); ?></label></th> <td><input size="36" type="text" name="tw_anywhere_bitlyapikey"
+id="tw_anywhere_bitlyapikey" value="<?php
+echo attribute_escape($tw_anywhere_bitlyapikey); ?>" /><br />
+*If you use bit.ly API,put on.
+</td>
+</tr>
+
+
 </tbody></table>
 
 <p class="submit">
@@ -260,6 +291,10 @@ id="tw_your_profile_show" value="1" <?php if ($tw_your_profile_show==1) {echo "c
 function remove_tw_anywhere()
 {
 	delete_option('tw_anywhere_api_key');
+	delete_option('tw_anywhere_username');
+	delete_option('tw_your_profile_show');
+	delete_option('tw_anywhere_bitlyusername');
+	delete_option('tw_anywhere_bitlyapikey');
 }
 
 

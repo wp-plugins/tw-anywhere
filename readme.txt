@@ -3,7 +3,7 @@ Contributors: wackey
 Tags: twitter , comment
 Requires at least: 2.9
 Tested up to: 2.9.2
-Stable tag: 1.21
+Stable tag: 1.30
 
 Add Twitter anyware API,connect and tweet,follow.And Topsy API using.It displays it like the comment column. 
 
@@ -26,10 +26,13 @@ Furthermore, the visitor takes side with the page by visitor's account and it is
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Configure the plugin at "tw anywhere" menu at the WordPress admin panel. Please input API key and username.
 1.Twitter API key required "read/write".
+1.using bit.ly short url service,you get bit.ly account,get username and API key,and Please input there at the WordPress admin panel.
 
 == Changelog ==
 
-= 1.01 =
+= 1.30 =
+* Make bit.ly short url when you input bit.ly username and API key.
+= 1.22 =
 * Plugin name renamed.Topsy API using.Twitter post display like the comment.
 = 1.01 =
 * Plugin name renamed.
