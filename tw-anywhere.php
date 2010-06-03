@@ -8,7 +8,7 @@ Plugin Name: Tw Anyware comment system
 Plugin URI: http://vcsearch.web-service-api.jp/
 Description: Add Twitter anyware API,connect and tweet,follow.
 Author: wackey
-Version: 1.30
+Version: 1.31
 Author URI: http://musilog.net/
 */
 
@@ -40,14 +40,15 @@ echo '<script src="http://platform.twitter.com/anywhere.js?id='.stripslashes($tw
 function add_anyware_area($content) {
 
 if (is_single()) {
-
+$tw_anywhere_commenttitle= get_option('tw_anywhere_commenttitle');
+if ($tw_anywhere_commenttitle=="") {$tw_anywhere_commenttitle="Twitter Comment";}
 $content .='<div id="twitterConnectButton"></div>
 <div id="twitterSignOut"></div><br />
 <div id="twitterFollowButton"></div>
 <div id="twitterUserInfo"></div>
 <div id="twitterTweetBox"></div>
 <div style="margin:0 0 10px 0;padding:10px;border:1px solid #BDDCAD;background:#EDFFDC;-moz-border-radius:10px;-webkit-border-radius:10px;">
-<h4 style="margin:0 0 5px 0;padding:0;">Twitter Comment<span id="topsy_counter"></span></h4>
+<h4 style="margin:0 0 5px 0;padding:0;">'.$tw_anywhere_commenttitle.'<span id="topsy_counter"></span></h4>
 <div id="topsy_trackbacks"></div>
 </div>';
 }
@@ -59,6 +60,8 @@ return $content;
 // フッターにjavascriptでいろいろ
 function add_footer_script() {
 $tw_anywhere_username= get_option('tw_anywhere_username');
+$tw_anywhere_commenttext= get_option('tw_anywhere_commenttext');
+if ($tw_anywhere_commenttext=="") {$tw_anywhere_commenttext="Please post here like the comment.";}
 $tw_anywhere_bitlyusername= get_option('tw_anywhere_bitlyusername');
 $tw_anywhere_bitlyapikey= get_option('tw_anywhere_bitlyapikey');
 $permalink = get_permalink();
@@ -106,7 +109,7 @@ function anywhereConnected(twitter) {
         width: 500,
         height: 50,
         label: "Twtter Post with this URL",
-        defaultContent: "@<?php echo stripslashes($tw_anywhere_username); ?> Please post here like the comment. " + <?php if (!$tw_anywhere_bitlyapikey=="") {echo '"'.$shortlink.'"';} else {echo "permalink";} ?>,
+        defaultContent: "@<?php echo stripslashes($tw_anywhere_username); ?> <?php echo stripslashes($tw_anywhere_commenttext); ?> " + <?php if (!$tw_anywhere_bitlyapikey=="") {echo '"'.$shortlink.'"';} else {echo "permalink";} ?>,
 	onTweet: function() {
         // Topsy APIを更新
         script = d.createElement('script');
@@ -214,6 +217,8 @@ if (isset($_POST['update_option'])) {
 check_admin_referer('tw-anywhere-options');
 update_option('tw_anywhere_api_key', $_POST['tw_anywhere_api_key']);
 update_option('tw_anywhere_username', $_POST['tw_anywhere_username']);
+update_option('tw_anywhere_commenttitle', $_POST['tw_anywhere_commenttitle']);
+update_option('tw_anywhere_commenttext', $_POST['tw_anywhere_commenttext']);
 update_option('tw_your_profile_show', $_POST['tw_your_profile_show']);
 update_option('tw_anywhere_bitlyusername', $_POST['tw_anywhere_bitlyusername']);
 update_option('tw_anywhere_bitlyapikey', $_POST['tw_anywhere_bitlyapikey']);
@@ -222,6 +227,8 @@ update_option('tw_anywhere_bitlyapikey', $_POST['tw_anywhere_bitlyapikey']);
 </div> <?php }
 $tw_anywhere_api_key= get_option('tw_anywhere_api_key');
 $tw_anywhere_username= get_option('tw_anywhere_username');
+$tw_anywhere_commenttitle= get_option('tw_anywhere_commenttitle');
+$tw_anywhere_commenttext= get_option('tw_anywhere_commenttext');
 $tw_your_profile_show= get_option('tw_your_profile_show');
 $tw_anywhere_bitlyusername= get_option('tw_anywhere_bitlyusername');
 $tw_anywhere_bitlyapikey= get_option('tw_anywhere_bitlyapikey');
@@ -240,12 +247,31 @@ _e('Twitter Anywhere Application API key', 'tw_anywhere_api'); ?></label></th> <
 id="tw_anywhere_api_key" value="<?php
 echo attribute_escape($tw_anywhere_api_key); ?>" /></td>
 </tr>
+
 <tr>
 <th><label for="tw_anywhere_username"><?php
 _e('your twitter username', 'tw_anywhere_username'); ?></label></th> <td><input size="36" type="text" name="tw_anywhere_username"
 id="tw_anywhere_username" value="<?php
 echo attribute_escape($tw_anywhere_username); ?>" /><br />
 without "@"
+</td>
+</tr>
+
+<tr>
+<th><label for="tw_anywhere_commenttitle"><?php
+_e('your twitter commenttitle', 'tw_anywhere_commenttitle'); ?></label></th> <td><input size="36" type="text" name="tw_anywhere_commenttitle"
+id="tw_anywhere_commenttitle" value="<?php
+echo attribute_escape($tw_anywhere_commenttitle); ?>" /><br />
+Comment are header title.
+</td>
+</tr>
+
+<tr>
+<th><label for="tw_anywhere_commenttext"><?php
+_e('your twitter commenttext', 'tw_anywhere_commenttext'); ?></label></th> <td><input size="36" type="text" name="tw_anywhere_commenttext"
+id="tw_anywhere_commenttext" value="<?php
+echo attribute_escape($tw_anywhere_commenttext); ?>" /><br />
+Comment text.
 </td>
 </tr>
 
@@ -292,6 +318,8 @@ function remove_tw_anywhere()
 {
 	delete_option('tw_anywhere_api_key');
 	delete_option('tw_anywhere_username');
+	delete_option('tw_anywhere_commenttitle');
+	delete_option('tw_anywhere_commenttext');
 	delete_option('tw_your_profile_show');
 	delete_option('tw_anywhere_bitlyusername');
 	delete_option('tw_anywhere_bitlyapikey');

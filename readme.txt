@@ -3,7 +3,7 @@ Contributors: wackey
 Tags: twitter , comment
 Requires at least: 2.9
 Tested up to: 2.9.2
-Stable tag: 1.30
+Stable tag: 1.31
 
 Add Twitter anyware API,connect and tweet,follow.And Topsy API using.It displays it like the comment column. 
 
@@ -30,6 +30,8 @@ Furthermore, the visitor takes side with the page by visitor's account and it is
 
 == Changelog ==
 
+= 1.31 =
+* Customize comment area title,comment view area title.
 = 1.30 =
 * Make bit.ly short url when you input bit.ly username and API key.
 = 1.22 =
