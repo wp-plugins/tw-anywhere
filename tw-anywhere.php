@@ -8,7 +8,7 @@ Plugin Name: Tw Anyware comment system
 Plugin URI: http://vcsearch.web-service-api.jp/
 Description: Add Twitter anyware API,connect and tweet,follow.
 Author: wackey
-Version: 1.33
+Version: 1.34
 Author URI: http://musilog.net/
 */
 
@@ -37,7 +37,7 @@ echo '<script src="http://platform.twitter.com/anywhere.js?id='.stripslashes($tw
 }
 
 // 本文の下部分にtwitter機能を搭載する場所をdivで指定
-function add_anyware_area() {
+function add_anyware_area($content) {
 
 if (is_single()) {
 $tw_anywhere_commenttitle= get_option('tw_anywhere_commenttitle');

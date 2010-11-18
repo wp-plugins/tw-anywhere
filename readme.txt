@@ -3,7 +3,7 @@ Contributors: wackey
 Tags: twitter , comment
 Requires at least: 3.0
 Tested up to: 3.01
-Stable tag: 1.33
+Stable tag: 1.34
 
 Add Twitter anyware API,connect and tweet,follow.And Topsy API using.It displays it like the comment column. 
 
@@ -30,6 +30,10 @@ Furthermore, the visitor takes side with the page by visitor's account and it is
 
 == Changelog ==
 
+= 1.34 =
+* Bug fix.
+= 1.33 =
+* Bug fix.
 = 1.32 =
 * put on omment area any place,single.php.
 = 1.31 =
