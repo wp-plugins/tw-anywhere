@@ -8,7 +8,7 @@ Plugin Name: Tw Anyware comment system
 Plugin URI: http://vcsearch.web-service-api.jp/
 Description: Add Twitter anyware API,connect and tweet,follow.
 Author: wackey
-Version: 1.32
+Version: 1.33
 Author URI: http://musilog.net/
 */
 
@@ -339,8 +339,8 @@ add_action('wp_footer','add_footer_script');
 
 // もしデフォルト値であれば、コンテンツ下に表示。そうでなければ、このフィルターは使用しない（好きな場所に設置）
 
-$tw_anywhere_bitlyapikey= get_option('tw_anyware_freearea');
-if ($tw_anywhere_bitlyapikey=="0") {
+$tw_anywhere_freearea= get_option('tw_anyware_freearea');
+if ($tw_anywhere_freearea==0) {
 add_filter('the_content', 'add_anyware_area');
 }
 
