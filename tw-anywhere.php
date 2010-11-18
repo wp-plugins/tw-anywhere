@@ -8,7 +8,7 @@ Plugin Name: Tw Anyware comment system
 Plugin URI: http://vcsearch.web-service-api.jp/
 Description: Add Twitter anyware API,connect and tweet,follow.
 Author: wackey
-Version: 1.31
+Version: 1.32
 Author URI: http://musilog.net/
 */
 
@@ -37,7 +37,7 @@ echo '<script src="http://platform.twitter.com/anywhere.js?id='.stripslashes($tw
 }
 
 // 本文の下部分にtwitter機能を搭載する場所をdivで指定
-function add_anyware_area($content) {
+function add_anyware_area() {
 
 if (is_single()) {
 $tw_anywhere_commenttitle= get_option('tw_anywhere_commenttitle');
@@ -222,6 +222,7 @@ update_option('tw_anywhere_commenttext', $_POST['tw_anywhere_commenttext']);
 update_option('tw_your_profile_show', $_POST['tw_your_profile_show']);
 update_option('tw_anywhere_bitlyusername', $_POST['tw_anywhere_bitlyusername']);
 update_option('tw_anywhere_bitlyapikey', $_POST['tw_anywhere_bitlyapikey']);
+update_option('tw_anyware_freearea', $_POST['tw_anyware_freearea']);
 //$this->upate_options(); ?>
 <div class="updated fade"><p><strong><?php _e('Options saved.'); ?></strong></p>
 </div> <?php }
@@ -232,6 +233,7 @@ $tw_anywhere_commenttext= get_option('tw_anywhere_commenttext');
 $tw_your_profile_show= get_option('tw_your_profile_show');
 $tw_anywhere_bitlyusername= get_option('tw_anywhere_bitlyusername');
 $tw_anywhere_bitlyapikey= get_option('tw_anywhere_bitlyapikey');
+$tw_anyware_freearea= get_option('tw_anyware_freearea');
 ?>
 
 <div class="wrap">
@@ -299,6 +301,11 @@ echo attribute_escape($tw_anywhere_bitlyapikey); ?>" /><br />
 </td>
 </tr>
 
+<tr>
+<th><label for="tw_anyware_freearea"><?php
+_e('好きな場所に設置?', 'tw_anyware_freearea'); ?></label></th> <td><input type="checkbox" name="tw_anyware_freearea"
+id="tw_anyware_freearea" value="1" <?php if ($tw_anyware_freearea==1) {echo "checked ";} ?> />yes</td>
+</tr>
 
 </tbody></table>
 
@@ -329,7 +336,13 @@ function remove_tw_anywhere()
 // WordPressプラグインとして登録するもの（ショートコードなど）
 add_action('wp_head','add_anywhere_script');
 add_action('wp_footer','add_footer_script');
+
+// もしデフォルト値であれば、コンテンツ下に表示。そうでなければ、このフィルターは使用しない（好きな場所に設置）
+
+$tw_anywhere_bitlyapikey= get_option('tw_anyware_freearea');
+if ($tw_anywhere_bitlyapikey=="0") {
 add_filter('the_content', 'add_anyware_area');
+}
 
 // 管理画面、管理用
 add_action('admin_menu', 'tw_anywhere_menu');
